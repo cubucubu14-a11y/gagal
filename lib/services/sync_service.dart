@@ -10,11 +10,12 @@ class SyncService {
     final String? scriptUrl = settingsBox.get('scriptUrl');
     if (scriptUrl == null || scriptUrl.isEmpty) return;
 
-    // 1. Eksekusi Delete Queue ke Apps Script
+    // 1. Eksekusi Delete Queue ke Google Apps Script
     final List deleteKeys = deleteQueueBox.keys.toList();
     for (var key in deleteKeys) {
       final data = deleteQueueBox.get(key);
       try {
+        // Ambil angka murninya saja karena Apps Script sudah otomatis menambahkan 'TRX-'
         final String rawIdOnly = data['id'].toString().replaceAll('TRX-', '');
         
         final response = await http.post(
@@ -25,9 +26,6 @@ class SyncService {
             'id': rawIdOnly,
           },
         );
-        
-        print('Response Delete Status: ${response.statusCode}');
-        print('Response Delete Body: ${response.body}');
 
         if (response.statusCode == 200 || response.statusCode == 302) {
           await deleteQueueBox.delete(key);
@@ -42,6 +40,7 @@ class SyncService {
       final trx = trxBox.get(key);
       if (trx != null && trx['synced'] == false) {
         try {
+          // Ambil angka murninya saja karena Apps Script sudah otomatis menambahkan 'TRX-'
           final String rawIdOnly = trx['rawId'].toString().replaceAll('TRX-', '');
 
           final response = await http.post(
@@ -57,10 +56,6 @@ class SyncService {
             },
           );
 
-          print('Response Upsert Status: ${response.statusCode}');
-          print('Response Upsert Body: ${response.body}');
-
-          // Jika Apps Script sukses merespon (biasanya status 200)
           if (response.statusCode == 200 || response.statusCode == 302) {
             trx['synced'] = true;
             await trxBox.put(key, trx);
