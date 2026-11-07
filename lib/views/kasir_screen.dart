@@ -14,7 +14,7 @@ class KasirScreen extends StatefulWidget {
 class _KasirScreenState extends State<KasirScreen> {
   int _currentIndex = 0;
   final List<String> products = ['Cireng', 'Kentang', 'Chicken Roll', 'Tahu Crispy'];
-  List> cart = [];
+  final List> cart = [];
   int? editingRawId;
 
   late final Box settingsBox;
@@ -256,7 +256,8 @@ class _KasirScreenState extends State<KasirScreen> {
                             label: const Text('Edit', style: TextStyle(color: Colors.blue)),
                             onPressed: () {
                               setState(() {
-                                cart = List>.from(trx['items']);
+                                cart.clear();
+                                cart.addAll(List>.from(trx['items']));
                                 editingRawId = trx['rawId'];
                                 _currentIndex = 0;
                               });
