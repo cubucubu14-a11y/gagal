@@ -14,7 +14,9 @@ class KasirScreen extends StatefulWidget {
 class _KasirScreenState extends State<KasirScreen> {
   int _currentIndex = 0;
   final List<String> products = ['Cireng', 'Kentang', 'Chicken Roll', 'Tahu Crispy'];
-  final List> cart = [];
+  
+  // Menggunakan var agar compiler Dart tidak bingung dengan tanda kurung siku/sudut
+  var cart = [];
   int? editingRawId;
 
   late final Box settingsBox;
@@ -140,7 +142,7 @@ class _KasirScreenState extends State<KasirScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = [
+    final pages = [
       Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -257,7 +259,7 @@ class _KasirScreenState extends State<KasirScreen> {
                             onPressed: () {
                               setState(() {
                                 cart.clear();
-                                cart.addAll(List>.from(trx['items']));
+                                cart.addAll(trx['items']);
                                 editingRawId = trx['rawId'];
                                 _currentIndex = 0;
                               });
