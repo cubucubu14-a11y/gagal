@@ -504,4 +504,3 @@ class _KasirHomePageState extends State<KasirHomePage> {
     );
   }
 }
-
