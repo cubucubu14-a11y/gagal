@@ -23,9 +23,6 @@ class KasirApp extends StatelessWidget {
   }
 }
 
-// ==========================================
-// 1. SPLASH / SETUP AWAL URL APPS SCRIPT
-// ==========================================
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -102,9 +99,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// ==========================================
-// 2. HALAMAN UTAMA KASIR
-// ==========================================
 class KasirHomePage extends StatefulWidget {
   const KasirHomePage({Key? key}) : super(key: key);
 
@@ -150,7 +144,6 @@ class _KasirHomePageState extends State<KasirHomePage> {
     return _cart.fold(0, (sum, item) => sum + item.price);
   }
 
-  // Buka Pop-up Numpad Standar Kasir
   void _openNumpad(String productName) {
     String inputVal = "";
     showDialog(
@@ -196,7 +189,6 @@ class _KasirHomePageState extends State<KasirHomePage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Numpad Grid
                   GridView.count(
                     crossAxisCount: 3,
                     shrinkWrap: true,
@@ -239,7 +231,6 @@ class _KasirHomePageState extends State<KasirHomePage> {
     );
   }
 
-  // Dialog Pengaturan (Ubah URL & Printer)
   void _showSettingsDialog() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String currentUrl = prefs.getString('SCRIPT_URL') ?? '';
@@ -323,7 +314,6 @@ class _KasirHomePageState extends State<KasirHomePage> {
     );
   }
 
-  // Proses Simpan Transaksi & Cetak Struk Bluetooth
   void _checkout(String paymentMethod) async {
     if (_cart.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -332,13 +322,12 @@ class _KasirHomePageState extends State<KasirHomePage> {
       return;
     }
 
-    // 1. Kirim ke Google Apps Script
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? url = prefs.getString('SCRIPT_URL');
     
     if (url != null && url.isNotEmpty) {
       try {
-        List> itemsList = _cart.map((e) => {'name': e.name, 'price': e.price}).toList();
+        var rawItems = _cart.map((e) => {'name': e.name, 'price': e.price}).toList();
         await http.post(
           Uri.parse(url),
           headers: {"Content-Type": "application/json"},
@@ -346,13 +335,12 @@ class _KasirHomePageState extends State<KasirHomePage> {
             'date': DateTime.now().toIso8601String(),
             'paymentMethod': paymentMethod,
             'total': _totalAmount,
-            'items': itemsList,
+            'items': rawItems,
           }),
         );
       } catch (_) {}
     }
 
-    // 2. Cetak Struk ke Printer Thermal 58mm (Baris per Baris)
     if (_connected) {
       bluetooth.printNewLine();
       bluetooth.printCustom("CIRENG WOII", 1, 1);
@@ -395,7 +383,6 @@ class _KasirHomePageState extends State<KasirHomePage> {
       ),
       body: Column(
         children: [
-          // Grid Menu Produk
           Expanded(
             flex: 5,
             child: GridView.builder(
@@ -425,7 +412,6 @@ class _KasirHomePageState extends State<KasirHomePage> {
             ),
           ),
           const Divider(height: 1),
-          // Area Keranjang Belanja Rinci
           Expanded(
             flex: 5,
             child: Container(
