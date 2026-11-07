@@ -17,11 +17,12 @@ class _KasirScreenState extends State<KasirScreen> {
   List> cart = [];
   int? editingRawId;
 
-  final settingsBox = Hive.box('settingsBox');
-  
+  late final Box settingsBox;
+
   @override
   void initState() {
     super.initState();
+    settingsBox = Hive.box('settingsBox');
     SyncService.triggerSync();
   }
 
@@ -133,12 +134,13 @@ class _KasirScreenState extends State<KasirScreen> {
     });
 
     await SyncService.triggerSync();
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Transaksi berhasil disimpan!')));
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> pages = [
+    final List<Widget> pages = [
       Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -276,6 +278,7 @@ class _KasirScreenState extends State<KasirScreen> {
                                 ),
                               ) ?? false;
 
+                              if (!mounted) return;
                               if (confirm) {
                                 final deleteQueueBox = Hive.box('deleteQueueBox');
                                 await deleteQueueBox.add({'id': trx['rawId'], 'tab': trx['tab']});
@@ -306,6 +309,7 @@ class _KasirScreenState extends State<KasirScreen> {
             icon: const Icon(Icons.sync),
             onPressed: () async {
               await SyncService.triggerSync();
+              if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Sinkronisasi manual dijalankan!')));
             },
           ),
