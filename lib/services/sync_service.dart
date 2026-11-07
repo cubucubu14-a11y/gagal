@@ -10,17 +10,20 @@ class SyncService {
     final String? scriptUrl = settingsBox.get('scriptUrl');
     if (scriptUrl == null || scriptUrl.isEmpty) return;
 
-    // 1. Eksekusi Delete Queue ke Backend Apps Script Lama
+    // 1. Eksekusi Delete Queue ke Apps Script Lama
     final List deleteKeys = deleteQueueBox.keys.toList();
     for (var key in deleteKeys) {
       final data = deleteQueueBox.get(key);
       try {
+        // Angka murni rawId dikirim tanpa TRX- karena Apps Script akan menambahkan 'TRX-' + id
+        final String rawIdOnly = data['id'].toString().replaceAll('TRX-', '');
+        
         final response = await http.post(
           Uri.parse(scriptUrl),
           body: {
             'action': 'delete',
-            'tab': data['tab'],
-            'id': data['id'].toString(),
+            'tab': data['tab'].toString(),
+            'id': rawIdOnly,
           },
         );
         if (response.statusCode == 200 || response.statusCode == 302) {
@@ -31,21 +34,23 @@ class SyncService {
       }
     }
 
-    // 2. Eksekusi Pending Upserts (Data Belum Synced)
+    // 2. Eksekusi Pending Upserts (Data Baru / Edit)
     for (var key in trxBox.keys) {
       final trx = trxBox.get(key);
       if (trx != null && trx['synced'] == false) {
         try {
+          final String rawIdOnly = trx['rawId'].toString().replaceAll('TRX-', '');
+
           final response = await http.post(
             Uri.parse(scriptUrl),
             body: {
               'action': 'upsert',
-              'tab': trx['tab'],
-              'id': trx['rawId'].toString(),
-              'tanggal': trx['dateOnly'],
-              'jam': trx['timeOnly'],
+              'tab': trx['tab'].toString(),
+              'id': rawIdOnly,
+              'tanggal': trx['dateOnly'].toString(),
+              'jam': trx['timeOnly'].toString(),
               'nominal': trx['total'].toString(),
-              'metode': trx['paymentMethod'],
+              'metode': trx['paymentMethod'].toString(),
             },
           );
 
