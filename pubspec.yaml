@@ -15,6 +15,8 @@ dependencies:
   blue_thermal_printer: ^1.2.3
   intl: ^0.19.0
   cupertino_icons: ^1.0.6
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -23,4 +25,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
