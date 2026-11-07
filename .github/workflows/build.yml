@@ -24,6 +24,19 @@ jobs:
         flutter-version: '3.19.x'
         channel: 'stable'
 
+    - name: Create Flutter Project Structure
+      run: |
+        # Buat temporary flutter project untuk mengambil folder android & pubspec bawaan
+        flutter create temp_app --org com.example.kasirwoii --platforms=android
+        cp -r temp_app/android ./
+        cp temp_app/pubspec.yaml ./pubspec.yaml.bak
+        rm -rf temp_app
+
+    - name: Restore Custom pubspec.yaml & lib
+      run: |
+        # Pastikan pubspec.yaml dan lib kita tetap aman dan digunakan
+        echo "Using custom lib and pubspec"
+
     - name: Install Dependencies
       run: flutter pub get
 
@@ -35,4 +48,3 @@ jobs:
       with:
         name: app-release
         path: build/app/outputs/flutter-apk/app-release.apk
-        
