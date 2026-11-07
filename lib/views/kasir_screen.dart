@@ -15,9 +15,8 @@ class _KasirScreenState extends State<KasirScreen> {
   int _currentIndex = 0;
   final List<String> products = ['Cireng', 'Kentang', 'Chicken Roll', 'Tahu Crispy'];
   
-  // Menggunakan var agar compiler Dart tidak bingung dengan tanda kurung siku/sudut
   var cart = [];
-  int? editingRawId;
+  dynamic editingRawId;
 
   late final Box settingsBox;
 
@@ -112,7 +111,8 @@ class _KasirScreenState extends State<KasirScreen> {
     String dateStr = DateFormat('yyyy-MM-dd').format(now);
     String timeStr = DateFormat('HH:mm:ss').format(now);
     
-    int rawId = editingRawId ?? DateTime.now().millisecondsSinceEpoch;
+    // Pertahankan rawId angka murni yang sama jika sedang mode Edit
+    dynamic rawId = editingRawId ?? DateTime.now().millisecondsSinceEpoch;
     String branch = settingsBox.get('branchName') ?? 'DEFAULT';
 
     final transactionData = {
@@ -210,7 +210,7 @@ class _KasirScreenState extends State<KasirScreen> {
               children: [
                 Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.blue, foregroundColor: Colors.white), onPressed: () => _checkout('QRIS'), child: const Text('QRIS'))),
                 const SizedBox(width: 12),
-                Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white), onPressed: () => _checkout('Tunai'), child: const Text('TUNAI'))),
+                Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white), onPressed: () => _checkout('TUNAI'), child: const Text('TUNAI'))),
               ],
             ),
           ],
